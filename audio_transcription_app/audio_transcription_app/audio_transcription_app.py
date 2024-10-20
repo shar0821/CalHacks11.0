@@ -67,11 +67,8 @@ def generate_transcript(file_path: str):
 def generate_jira_tickets(file_path: str):
     transcript = generate_transcript(file_path)
     summary,output=get_email_summary_and_jira_action_items(transcript)
-    generate_sample_code(summary)
     extract_issues_and_create_tasks(output)
     
-def generate_sample_code():
-    pass
 
 def index() -> rx.Component:
     # Welcome Page (Index)

@@ -1,4 +1,5 @@
 import google.generativeai as genai
+from dotenv import load_dotenv
 import os
 import json
 
@@ -6,6 +7,7 @@ import json
 # os.environ["API_KEY"] = "your_api_key_here"  # Replace with your actual API key
 
 # Configure the generative AI model
+load_dotenv()
 genai.configure(api_key=os.environ["API_KEY"])
 model = genai.GenerativeModel("gemini-1.5-flash")
 
