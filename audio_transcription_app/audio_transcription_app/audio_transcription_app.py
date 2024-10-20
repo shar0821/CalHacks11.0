@@ -71,7 +71,6 @@ def generate_jira_tickets(file_path: str):
     extract_issues_and_create_tasks(output)
     
 def generate_sample_code():
-
     pass
 
 def index() -> rx.Component:
