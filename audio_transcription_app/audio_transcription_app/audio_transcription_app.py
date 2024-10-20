@@ -1,15 +1,58 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 
 import reflex as rx
-
+import requests
 from rxconfig import config
+import os
+import pyaudio
+from pydub import AudioSegment
+import io 
+from fastapi import UploadFile
 
 
-class State(rx.State):
-    """The app state."""
+async def play_audio(file_path: str):
+    chunk = 1024
+    # Load the MP3 file
+    print(file_path)
+    audio = AudioSegment.from_mp3(file_path)
+    
+    # Convert to raw PCM audio data
+    raw_data = audio.raw_data
+    
+    # Play the audio
+    p = pyaudio.PyAudio()
 
-    ...
+    stream = p.open(format=p.get_format_from_width(audio.sample_width),
+                    channels=audio.channels,
+                    rate=audio.frame_rate,
+                    output=True)
 
+    chunk_size = 1024
+    data = io.BytesIO(raw_data)
+    while True:
+        chunk = data.read(chunk_size)
+        if not chunk:
+            break
+        stream.write(chunk)
+    
+    # Clean up
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+
+
+# @app.api.api_route("/upload_audio", methods=["POST"])
+async def upload_audio(file: UploadFile):
+    file_path = f"./uploads/{file.filename}"
+    # print(file_path)
+    os.makedirs("uploads", exist_ok=True)
+    
+    with open(file_path, "wb") as buffer:
+        content = await file.read()
+        buffer.write(content)
+    
+    await play_audio(file_path)
+    return {"message": "Audio played successfully"}
 
 def index() -> rx.Component:
     # Welcome Page (Index)
@@ -37,3 +80,4 @@ def index() -> rx.Component:
 
 app = rx.App()
 app.add_page(index)
+app.api.add_api_route("/upload_audio", upload_audio,methods=["POST"])
