@@ -1,6 +1,6 @@
 import requests
 
-url = ''
+url = 'https://aebe-199-115-241-205.ngrok-free.app/upload_audio'
 
 file_path = 'sample.mp3'
 with open(file_path, 'rb') as file:
