@@ -8,7 +8,7 @@ import pyaudio
 from pydub import AudioSegment
 import io 
 from fastapi import UploadFile
-
+from lib.DeepgramAdapter import DeepgramAdapter
 
 async def play_audio(file_path: str):
     chunk = 1024
@@ -54,6 +54,13 @@ async def upload_audio(file: UploadFile):
     await play_audio(file_path)
     return {"message": "Audio played successfully"}
 
+def generate_transcript(file_path: str):
+    # Call the Deepgram API to transcribe the audio file
+    # print(file_path)
+    transcript = DeepgramAdapter(file_path)
+    print('transcript: ', transcript)
+    return transcript
+
 def index() -> rx.Component:
     # Welcome Page (Index)
     return rx.container(
@@ -81,3 +88,4 @@ def index() -> rx.Component:
 app = rx.App()
 app.add_page(index)
 app.api.add_api_route("/upload_audio", upload_audio,methods=["POST"])
+app.api.add_api_route("/generate_transcript", generate_transcript,methods=["POST"])
