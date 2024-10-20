@@ -9,6 +9,9 @@ from pydub import AudioSegment
 import io 
 from fastapi import UploadFile
 from lib.DeepgramAdapter import DeepgramAdapter
+from lib.GeminiAdapter import get_email_summary_and_jira_action_items
+from lib.JiraAdapter import extract_issues_and_create_tasks
+from lib.emailclient import send_email
 
 async def play_audio(file_path: str):
     chunk = 1024
@@ -60,6 +63,16 @@ def generate_transcript(file_path: str):
     transcript = DeepgramAdapter(file_path)
     print('transcript: ', transcript)
     return transcript
+
+def generate_jira_tickets(file_path: str):
+    transcript = generate_transcript(file_path)
+    summary,output=get_email_summary_and_jira_action_items(transcript)
+    generate_sample_code(summary)
+    extract_issues_and_create_tasks(output)
+    
+def generate_sample_code():
+
+    pass
 
 def index() -> rx.Component:
     # Welcome Page (Index)
